@@ -7,7 +7,7 @@
         "test": "node test.js"
     },
     "keywords": [],
-    "author": "ganyu@segs.eu.org",
+    "author": "Asriel Nguyen <asriel@dreemurrs.eu.org>",
     "license": "MIT",
     "dependencies": {
         "node-fetch": "2"
