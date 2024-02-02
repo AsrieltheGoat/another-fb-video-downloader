@@ -1,20 +1,22 @@
 {
-  "name": "fb-video-downloader",
-  "version": "1.0.0",
-  "description": "Facebook Video Downloader",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.4.1",
-    "node-fetch": "2"
-  },
-  "exports": {
-    ".": "./index.js"
-  }
+    "name": "fb-video-downloader",
+    "version": "1.0.0",
+    "description": "Facebook Video Downloader",
+    "main": "index.js",
+    "scripts": {
+        "test": "node test.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "dotenv": "^16.4.1",
+        "node-fetch": "2"
+    },
+    "exports": {
+        ".": "./index.js"
+    },
+    "engines": {
+        "node": "14.x"
+    }
 }
