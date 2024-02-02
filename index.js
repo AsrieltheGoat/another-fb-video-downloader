@@ -1,8 +1,9 @@
-// index.js
 const fetch = require("node-fetch");
 
 function extractVideoId(link) {
-    let match = link.match(/(?:facebook|fb).*\/(?:videos|reel|watch)(?:\/?)(?:\?v=)?(\d+)/i);
+    let match = link.match(
+        /(?:facebook|fb).*\/(?:videos|reel|watch)(?:\/?)(?:\?v=)?(\d+)/i
+    );
     return match && match.length >= 2 ? match[1] : null;
 }
 

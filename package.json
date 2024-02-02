@@ -7,16 +7,12 @@
         "test": "node test.js"
     },
     "keywords": [],
-    "author": "",
-    "license": "ISC",
+    "author": "ganyu@segs.eu.org",
+    "license": "MIT",
     "dependencies": {
-        "dotenv": "^16.4.1",
         "node-fetch": "2"
     },
     "exports": {
         ".": "./index.js"
-    },
-    "engines": {
-        "node": "14.x"
     }
 }
