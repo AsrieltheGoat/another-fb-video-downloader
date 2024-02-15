@@ -8,13 +8,13 @@ A Node.js module using the Facebook Graph API to quickly extract direct video UR
 Use the package manager [npm](https://www.npmjs.com/) to install.
 
 ```bash
-npm install
+npm install another-fb-video-downloader
 ```
 
 ## Usage
 
 ```javascript
-const { facebook } = require('./index.js');
+const { facebook } = require('another-fb-video-downloader');
 
 facebook('https://www.facebook.com/100008639590618/videos/266077793027023/')
     .then(videoUrl => console.log(videoUrl))
