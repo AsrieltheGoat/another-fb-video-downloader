@@ -64,6 +64,12 @@ function facebook(link) {
         .then((response) => response.text())
         .then((text) => {
             let json = JSON.parse(text.split("\n")[0]);
+            if (!json || !json.data) {
+                return JSON.stringify({"error": "Invalid response from the server!"});
+            }
+            if (json.data.video == null) {
+                return JSON.stringify({"error": "Video not found or private video!"});
+            }
             let out =
                 json.data.video.playable_url || json.data.video.playable_url_hd;
             return out;
