@@ -20,7 +20,7 @@ function encodeRequestBody(requestBody) {
     return encodedParams.join("&");
 }
 
-function facebook(link) {
+function facebook(link, lq = false) {
     let videoId = extractVideoId(link);
     if (!videoId) {
         console.log("Invalid link!");
@@ -57,7 +57,7 @@ function facebook(link) {
             "content-type": "application/x-www-form-urlencoded",
             "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-Site": "same-origin", // ! Nessessary
         },
         body: encodeRequestBody(requestBody),
     })
@@ -65,14 +65,23 @@ function facebook(link) {
         .then((text) => {
             let json = JSON.parse(text.split("\n")[0]);
             if (!json || !json.data) {
-                return JSON.stringify({"error": "Invalid response from the server!"});
+                return JSON.stringify({
+                    error: "Invalid response from the server!",
+                });
             }
             if (json.data.video == null) {
-                return JSON.stringify({"error": "Video not found or private video!"});
+                return JSON.stringify({
+                    error: "Video not found or private video!",
+                });
             }
-            let out =
-                json.data.video.playable_url || json.data.video.playable_url_hd;
-            return out;
+
+            // json.data.video.playable_url || json.data.video.playable_url_hd;
+
+            if (!json.data.video.playable_url_quality_hd || lq === true) {
+                return json.data.video.playable_url + "&sd_quality"; // ? Add indicator for low quality
+            }
+
+            return json.data.video.playable_url_quality_hd;
         });
 }
 

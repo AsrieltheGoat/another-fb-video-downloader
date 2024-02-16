@@ -16,7 +16,11 @@ npm install another-fb-video-downloader
 ```javascript
 const { facebook } = require('another-fb-video-downloader');
 
-facebook('https://www.facebook.com/100008639590618/videos/266077793027023/')
+// ? facebook(url, lq = true||false)
+// ? url: string
+// ? lq: boolean (true for low quality) (optional)
+
+facebook('https://www.facebook.com/100008639590618/videos/266077793027023/' false)
     .then(videoUrl => console.log(videoUrl))
     .catch(error => console.error(error));
 ```
