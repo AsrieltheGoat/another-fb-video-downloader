@@ -28,4 +28,16 @@ const { facebook } = require("another-fb-video-downloader");
     } catch (error) {
         console.error(error);
     }
+
+    // Error test
+    console.log("Error test");
+    try {
+        const videoUrl3 = await facebook(
+            "https://www.facebook.com/photo/?fbid=726350166339523&set=gm.916158123339104&idorvanity=880640216890895",
+            false
+        );
+        console.log(videoUrl3);
+    } catch (error) {
+        console.error(error);
+    }
 })();

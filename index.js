@@ -23,8 +23,10 @@ function encodeRequestBody(requestBody) {
 function facebook(link, lq = false) {
     let videoId = extractVideoId(link);
     if (!videoId) {
-        console.log("Invalid link!");
-        return Promise.reject(new Error("Invalid link!"));
+        // Output as an error
+        return JSON.stringify({
+            error: "Invalid URL!",
+        });
     }
 
     let requestBody = {
