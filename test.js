@@ -40,4 +40,16 @@ const { facebook } = require("another-fb-video-downloader");
     } catch (error) {
         console.error(error);
     }
+
+        // fb.watch
+        console.log("fb.watch test");
+        try {
+            const videoUrl4 = await facebook(
+                "https://fb.watch/rru5r2WJ5N/",
+                false
+            );
+            console.log(videoUrl4);
+        } catch (error) {
+            console.error(error);
+        }
 })();

@@ -1,35 +1,25 @@
 const fetch = require("node-fetch");
 
 function extractVideoId(link) {
-    let match = link.match(
+    const match = link.match(
         /(?:facebook|fb).*\/(?:videos|reel|watch)(?:\/?)(?:\?v=)?(\d+)/i
     );
     return match && match.length >= 2 ? match[1] : null;
 }
 
 function encodeRequestBody(requestBody) {
-    let encodedParams = [];
-    for (let key in requestBody) {
-        if (requestBody.hasOwnProperty(key)) {
-            let value = requestBody[key];
-            let encodedValue =
-                encodeURIComponent(key) + "=" + encodeURIComponent(value);
-            encodedParams.push(encodedValue);
-        }
-    }
-    return encodedParams.join("&");
+    return Object.entries(requestBody)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join("&");
 }
 
 function facebook(link, lq = false) {
-    let videoId = extractVideoId(link);
+    const videoId = extractVideoId(link);
     if (!videoId) {
-        // Output as an error
-        return JSON.stringify({
-            error: "Invalid URL!",
-        });
+        return Promise.resolve(JSON.stringify({ error: "Invalid URL!" }));
     }
 
-    let requestBody = {
+    const requestBody = {
         doc_id: "5279476072161634",
         variables: JSON.stringify({
             UFI2CommentsProvider_commentsKey: "CometTahoeSidePaneQuery",
@@ -59,32 +49,36 @@ function facebook(link, lq = false) {
             "content-type": "application/x-www-form-urlencoded",
             "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-            "Sec-Fetch-Site": "same-origin", // ! Nessessary
+            "Sec-Fetch-Site": "same-origin",
         },
         body: encodeRequestBody(requestBody),
     })
-        .then((response) => response.text())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
         .then((text) => {
-            let json = JSON.parse(text.split("\n")[0]);
-            if (!json || !json.data) {
-                return JSON.stringify({
-                    error: "Invalid response from the server!",
-                });
-            }
-            if (json.data.video == null) {
-                return JSON.stringify({
-                    error: "Video not found or private video!",
-                });
-            }
+            try {
+                const json = JSON.parse(text.split("\n")[0]);
+                if (!json || !json.data) {
+                    return JSON.stringify({ error: "Invalid response from the server!" });
+                }
+                if (json.data.video == null) {
+                    return JSON.stringify({ error: "Video not found or private video!" });
+                }
 
-            // json.data.video.playable_url || json.data.video.playable_url_hd;
+                if (!json.data.video.playable_url_quality_hd || lq === true) {
+                    return `${json.data.video.playable_url}&sd_quality`;
+                }
 
-            if (!json.data.video.playable_url_quality_hd || lq === true) {
-                return json.data.video.playable_url + "&sd_quality"; // ? Add indicator for low quality
+                return json.data.video.playable_url_quality_hd;
+            } catch (e) {
+                return JSON.stringify({ error: "Error parsing server response!" });
             }
-
-            return json.data.video.playable_url_quality_hd;
-        });
+        })
+        .catch((error) => JSON.stringify({ error: error.message }));
 }
 
 module.exports = {
