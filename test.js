@@ -40,12 +40,11 @@ const { facebook } = require("another-fb-video-downloader");
     } catch (error) {
         console.error(error);
     }
-
         // fb.watch
-        console.log("fb.watch test");
+        console.log("share test");
         try {
             const videoUrl4 = await facebook(
-                "https://fb.watch/rru5r2WJ5N/",
+                "https://www.facebook.com/share/v/18c4VaXDbY/",
                 false
             );
             console.log(videoUrl4);
