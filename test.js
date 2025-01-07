@@ -1,4 +1,4 @@
-const { facebook } = require('./index.js');
+import { facebook } from './index.js';
 
 async function runTestCases() {
     // User link (public video)
