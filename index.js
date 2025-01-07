@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";  // Using ES module import
 
 function extractVideoId(link) {
     const match = link.match(
@@ -78,6 +78,4 @@ async function facebook(link, lq = false) {
     }
 }
 
-module.exports = {
-    facebook,
-};
+export { facebook };  // Exporting the function using ES module syntax
