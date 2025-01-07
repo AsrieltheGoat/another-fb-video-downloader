@@ -2,9 +2,9 @@ const fetch = require("node-fetch");
 
 function extractVideoId(link) {
     const match = link.match(
-        /(?:facebook|fb).*\/(?:videos|reel|watch)(?:\/?)(?:\?v=)?(\d+)/i
+        /(?:facebook|fb).*?(?:\/videos\/|\/reel|\/watch\?v=|\/share\/v\/)(\w+)/i
     );
-    return match && match.length >= 2 ? match[1] : null;
+    return match && match[1] ? match[1] : null;
 }
 
 function encodeRequestBody(requestBody) {
@@ -13,10 +13,10 @@ function encodeRequestBody(requestBody) {
         .join("&");
 }
 
-function facebook(link, lq = false) {
+async function facebook(link, lq = false) {
     const videoId = extractVideoId(link);
     if (!videoId) {
-        return Promise.resolve(JSON.stringify({ error: "Invalid URL!" }));
+        return JSON.stringify({ error: "Invalid URL!" });
     }
 
     const requestBody = {
@@ -43,42 +43,39 @@ function facebook(link, lq = false) {
         server_timestamps: true,
     };
 
-    return fetch("https://www.facebook.com/api/graphql/", {
-        method: "POST",
-        headers: {
-            "content-type": "application/x-www-form-urlencoded",
-            "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-            "Sec-Fetch-Site": "same-origin",
-        },
-        body: encodeRequestBody(requestBody),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then((text) => {
-            try {
-                const json = JSON.parse(text.split("\n")[0]);
-                if (!json || !json.data) {
-                    return JSON.stringify({ error: "Invalid response from the server!" });
-                }
-                if (json.data.video == null) {
-                    return JSON.stringify({ error: "Video not found or private video!" });
-                }
+    try {
+        const response = await fetch("https://www.facebook.com/api/graphql/", {
+            method: "POST",
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                "User-Agent":
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+                "Sec-Fetch-Site": "same-origin",
+            },
+            body: encodeRequestBody(requestBody),
+        });
 
-                if (!json.data.video.playable_url_quality_hd || lq === true) {
-                    return `${json.data.video.playable_url}&sd_quality`;
-                }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                return json.data.video.playable_url_quality_hd;
-            } catch (e) {
-                return JSON.stringify({ error: "Error parsing server response!" });
-            }
-        })
-        .catch((error) => JSON.stringify({ error: error.message }));
+        const text = await response.text();
+        const json = JSON.parse(text.split("\n")[0]);
+
+        if (!json || !json.data || !json.data.video) {
+            return JSON.stringify({ error: "Video not found or invalid response!" });
+        }
+
+        const { playable_url, playable_url_quality_hd } = json.data.video;
+
+        if (!playable_url_quality_hd || lq === true) {
+            return playable_url ? `${playable_url}&sd_quality` : JSON.stringify({ error: "SD video not available!" });
+        }
+
+        return playable_url_quality_hd;
+    } catch (error) {
+        return JSON.stringify({ error: error.message });
+    }
 }
 
 module.exports = {
