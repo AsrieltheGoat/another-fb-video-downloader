@@ -8,6 +8,13 @@
         "regex": "node regex.js"
     },
     "keywords": [],
+    "author": "Asriel Nguyen <    "type": "module",
+
+    "scripts": {
+        "test": "node test.js",
+        "regex": "node regex.js"
+    },
+    "keywords": [],
     "author": "Asriel Nguyen <asriel@dreemurrs.eu.org>",
     "license": "MIT",
     "dependencies": {
