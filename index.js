@@ -1,5 +1,3 @@
-import fetch from "node-fetch";  // Using ES module import
-
 function extractVideoId(link) {
     const match = link.match(
         /(?:facebook|fb).*?(?:\/videos\/|\/reel|\/watch\?v=|\/share\/v\/)(\w+)/i
@@ -78,4 +76,4 @@ async function facebook(link, lq = false) {
     }
 }
 
-export { facebook };  // Exporting the function using ES module syntax
+module.exports = { facebook };  // Exporting the function using CommonJS syntax
